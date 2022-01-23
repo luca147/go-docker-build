@@ -1,0 +1,15 @@
+#
+# Build stage
+#
+FROM golang:1.17.6-alpine3.15 as builder
+WORKDIR /go/src/github.com/luca147/go-docker-build
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /go/bin/app .
+
+#
+# Run stage
+#
+FROM gcr.io/distroless/static
+COPY --from=builder /go/bin/app /
+ENTRYPOINT ["/app"]
+EXPOSE 8080

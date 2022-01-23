@@ -1,0 +1,15 @@
+#
+# Build stage
+#
+FROM golang:1.17.6-alpine3.15 as builder
+WORKDIR /go/src/github.com/luca147/go-docker-build
+COPY . .
+RUN go build -o /go/bin/app .
+
+#
+# Run stage
+#
+FROM alpine
+COPY --from=builder /go/bin/app /
+ENTRYPOINT ["/app"]
+EXPOSE 8080
